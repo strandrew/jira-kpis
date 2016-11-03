@@ -188,7 +188,6 @@ def print_releases_per_month():
 				release_date = datetime.datetime.strptime(release.releaseDate, '%Y-%m-%d')
 				if (release_date.year == now.year):
 					releases_per_month[release_date.month-1] += 1
-					print('DEBUG: Project: {} - Version: {} - Date: {}'.format(project.key, release.name, release_date))
 
 
 	for totalInMonth in releases_per_month:
@@ -196,6 +195,31 @@ def print_releases_per_month():
 
 	print(lineString)
 	return	
+
+def print_RUPs_per_month():
+	now = datetime.datetime.now()
+	lineString = 'Roll-Up Patches per month'
+	releases_per_month = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+
+	all_projects = jira.projects()
+	for project in all_projects:
+		releases = jira.project_versions(project.key)
+		for release in releases:
+			isRelease = release.name[-1:].isdigit()
+			isPatch = (release.name.find('RUP') != -1)
+		
+			if (release.released == True and isRelease and isPatch):
+				release_date = datetime.datetime.strptime(release.releaseDate, '%Y-%m-%d')
+				if (release_date.year == now.year):
+					releases_per_month[release_date.month-1] += 1
+
+
+	for totalInMonth in releases_per_month:
+		lineString += ', {}'.format(totalInMonth)
+
+	print(lineString)
+	return	
+
 ####################################################################################################################
 """ Calculate my KPIs """
 # first thing is to connect to JIRA
@@ -214,4 +238,5 @@ print_enhancements_released_per_month()
 print_bugs_released_per_month()
 print_bugs_reported_per_month()
 print_releases_per_month()
+print_RUPs_per_month()
 
