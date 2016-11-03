@@ -1,1 +1,2 @@
 # jira-kpis
+This is a very rough python script that I use to pull KPIs from our JIRA instance. It is inneficient at best but it gets the job done seeing as I only run it about once a month. You could run it against your own JIRA instance by updating the connect URL. Note it does all of this with anonymous read access. You would have to add the ability to connect/authorize as a specific user if you don't allow for anonymous read.
