@@ -32,34 +32,6 @@ def all_closed_critical_bugs_before_start_of_year():
 	now = datettime.datetime.now()
 	query = 'issuetype = Bug and created < {}-01-01 and status not in (open, reopened) and priority = critical'.format(now.year)
 
-def my_function():
-	
-	for i in range(1, 13):
-		i2 = i+1
-		y = now.year
-		y2 = y
-	
-		if (i2 > 12):
-			i2 = 1
-			y2 += 1
-	
-		kpiDate = datetime.datetime(y, i, 1)
-		print(figlet_format(kpiDate.strftime('%B')))
-		#print('KPIs for the month of {}'.format(kpiDate.strftime('%B')))
-	
-	
-		#Bugs opened
-		query = 'issuetype = Bug and created  >= "{}-{}-01" and created < "{}-{}-01"'.format(y, i, y2, i2)
-		issues = jira.search_issues(query)
-		print('Bugs opened for the month: {}'.format(len(issues)))
-	
-		#bugs closed
-		query = 'issuetype = Bug and resolved  >= "{}-{}-01" and resolved < "{}-{}-01"'.format(y, i, y2, i2)
-		issues = jira.search_issues(query)
-		print('Bugs closed for the month: {}'.format(len(issues)))
-	
-		return None
-
 def calculate_average_age(all_issues):
 	now = datetime.datetime.now()
 
@@ -200,6 +172,30 @@ def print_bugs_reported_per_month():
 	print(lineString)
 	return	
 
+def print_releases_per_month():
+	now = datetime.datetime.now()
+	lineString = 'Releases per month'
+	releases_per_month = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+
+	all_projects = jira.projects()
+	for project in all_projects:
+		releases = jira.project_versions(project.key)
+		for release in releases:
+			isRelease = release.name[-1:].isdigit()
+			isNotPatch = (release.name.find('RUP') == -1)
+		
+			if (release.released == True and isRelease and isNotPatch):
+				release_date = datetime.datetime.strptime(release.releaseDate, '%Y-%m-%d')
+				if (release_date.year == now.year):
+					releases_per_month[release_date.month-1] += 1
+					print('DEBUG: Project: {} - Version: {} - Date: {}'.format(project.key, release.name, release_date))
+
+
+	for totalInMonth in releases_per_month:
+		lineString += ', {}'.format(totalInMonth)
+
+	print(lineString)
+	return	
 ####################################################################################################################
 """ Calculate my KPIs """
 # first thing is to connect to JIRA
@@ -217,3 +213,5 @@ print_support_issues_escalated_per_month()
 print_enhancements_released_per_month()
 print_bugs_released_per_month()
 print_bugs_reported_per_month()
+print_releases_per_month()
+
