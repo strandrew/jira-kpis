@@ -5,6 +5,7 @@ from pyfiglet import figlet_format
 import datetime
 
 def all_issues_from_query(query):
+	#print('DEBUG: {}'.format(query))
 	done = False
 	start = 0
 	total = 0
@@ -27,10 +28,11 @@ def all_opened_bugs_before_start_of_year():
 	all_issues = all_issues_from_query(query)
 	return all_issues
 
-def all_closed_critical_bugs_before_start_of_year():
-	"""Retrieves all closed critical bugs before the start of the current year"""
-	now = datettime.datetime.now()
-	query = 'issuetype = Bug and created < {}-01-01 and status not in (open, reopened) and priority = critical'.format(now.year)
+def all_opened_bugs_before_start_of_year_by_pri(priority):
+	now = datetime.datetime.now()
+	query = 'issuetype = Bug and created < {}-01-01 and status in (open, reopened) and priority in({})'.format(now.year, priority)
+	all_issues = all_issues_from_query(query)
+	return all_issues
 
 def calculate_average_age(all_issues):
 	now = datetime.datetime.now()
@@ -96,6 +98,45 @@ def print_average_ages():
 	print(averageString)
 
 
+	return
+
+def tally_bugs_by_pri(priority):
+	now = datetime.datetime.now()
+	lineString = 'Total {} bugs in system at EOM'.format(priority)
+	all_issues = all_opened_bugs_before_start_of_year_by_pri(priority)
+
+	# loop through all months
+	for i in range(1, 13):
+		i2 = i+1
+		y = now.year
+		y2 = y
+		
+		if (i2 > 12):
+			i2 = 1
+			y2 += 1
+
+		query = 'issuetype = Bug and created >= "{}-{}-01" and created < "{}-{}-01" and status in (open, reopened) and priority in ({})'.format(y, i, y2, i2, priority)
+
+		all_issues += all_issues_from_query(query)
+		lineString += ', {}'.format(len(all_issues))
+
+	return lineString
+
+def print_all_trivial_bugs():
+
+	print(tally_bugs_by_pri('Trivial'))
+	return
+
+def print_all_minor_bugs():
+	print(tally_bugs_by_pri('Minor'))
+	return
+
+def print_all_major_bugs():
+	print(tally_bugs_by_pri('Major'))
+	return
+
+def print_all_critical_bugs():
+	print(tally_bugs_by_pri('Critical'))
 	return
 
 def print_average_time_to_close_critical_bugs():
@@ -239,4 +280,8 @@ print_bugs_released_per_month()
 print_bugs_reported_per_month()
 print_releases_per_month()
 print_RUPs_per_month()
+print_all_trivial_bugs()
+print_all_minor_bugs()
+print_all_major_bugs()
+print_all_critical_bugs()
 
