@@ -144,7 +144,7 @@ def print_average_time_to_close_design():
 	averageString = 'Average time in days to close design requests per month'
 
 	# loop through all months
-	for i in rang(1, 13):
+	for i in range(1, 13):
 		i2 = i+1;
 		y = now.year
 		y2 = y
@@ -160,7 +160,7 @@ def print_average_time_to_close_design():
 	print(averageString)
 
 	return
-	
+
 def print_average_time_to_close_critical_bugs():
 	now = datetime.datetime.now()
 	averageString = 'Average time in days to close critical bugs per month'
