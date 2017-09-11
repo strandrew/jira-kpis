@@ -153,7 +153,7 @@ def print_average_time_to_close_design():
 			i2 = 1
 			y2 += 1
 
-		query = 'issueType = "Customer Feature Request (Design)" and created >= "{}-{}-01" and created < "{}-{}-01" and status not in (open, reopened)'.format(y, i, y2, i2)
+		query = 'issueType = "Customer Feature Request (Design)" and resolutionDate >= "{}-{}-01" and resolutionDate < "{}-{}-01" and status not in (open, reopened)'.format(y, i, y2, i2)
 		monthly_issues = all_issues_from_query(query)
 		averageString += ", {}".format(calculate_average_days_open(monthly_issues))
 
