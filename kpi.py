@@ -139,6 +139,28 @@ def print_all_critical_bugs():
 	print(tally_bugs_by_pri('Critical'))
 	return
 
+def print_average_time_to_close_design():
+	now = datetime.datetime.now()
+	averageString = 'Average time in days to close design requests per month'
+
+	# loop through all months
+	for i in rang(1, 13):
+		i2 = i+1;
+		y = now.year
+		y2 = y
+
+		if (i2 > 12):
+			i2 = 1
+			y2 += 1
+
+		query = 'issueType = "Customer Feature Request (Design)" and created >= "{}-{}-01" and created < "{}-{}-01" and status not in (open, reopened)'.format(y, i, y2, i2)
+		monthly_issues = all_issues_from_query(query)
+		averageString += ", {}".format(calculate_average_days_open(monthly_issues))
+
+	print(averageString)
+
+	return
+	
 def print_average_time_to_close_critical_bugs():
 	now = datetime.datetime.now()
 	averageString = 'Average time in days to close critical bugs per month'
@@ -274,6 +296,7 @@ jira = JIRA(options)
 print_header_row()
 print_average_ages()
 print_average_time_to_close_critical_bugs()
+print_average_time_to_close_design()
 print_support_issues_escalated_per_month()
 print_enhancements_released_per_month()
 print_bugs_released_per_month()
